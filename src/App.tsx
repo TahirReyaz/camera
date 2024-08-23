@@ -96,7 +96,7 @@ const App: React.FC = () => {
         {!isCameraAccessible ? (
           <button
             onClick={requestCameraAccess}
-            className="bg-gray-500 text-anilist-aqua_haze p-2 rounded mb-4"
+            className="bg-anilist-mirage text-anilist-aqua_haze p-2 rounded mb-4"
           >
             Request Camera Access
           </button>
@@ -138,10 +138,10 @@ const App: React.FC = () => {
             height="300"
           ></video>
 
-          {/* Square overlay for camera screen */}
+          {/* Reference boundary box */}
           {isCameraOpen && (
             <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center pointer-events-none">
-              <div className="border-4 border-anilist-atlantis w-[80%] h-[80%]"></div>
+              <div className="border-4 border-anilist-atlantis/50 rounded-sm w-[80%] h-[80%]"></div>
             </div>
           )}
         </div>
