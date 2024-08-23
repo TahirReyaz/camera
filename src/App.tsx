@@ -15,14 +15,10 @@ const App: React.FC = () => {
       });
       if (permissionStatus.state === "granted") {
         setIsCameraAccessible(true);
-        alert("Camera access granted. You can now open the camera.");
       } else if (permissionStatus.state === "prompt") {
         try {
           await navigator.mediaDevices.getUserMedia({ video: true });
           setIsCameraAccessible(true);
-          alert(
-            "Camera access granted after prompt. You can now open the camera."
-          );
         } catch (error) {
           console.error("Error accessing camera: ", error);
           alert("Camera access denied or unavailable.");
@@ -98,7 +94,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 relative bg-anilist-white_firefly">
+    <div className="flex flex-col items-center justify-center p-4 relative bg-anilist-white_firefly min-h-screen">
       {!isCameraAccessible ? (
         <button
           onClick={requestCameraAccess}
@@ -112,7 +108,7 @@ const App: React.FC = () => {
           {!isCameraOpen ? (
             <button
               onClick={() => openCamera(isUsingBackCamera)}
-              className="bg-anilist-persian_green text-anilist-aqua_haze p-2 rounded mb-4"
+              className="bg-anilist-persian_green text-anilist-aqua_haze w-fit p-2 rounded mb-4"
             >
               Open Camera
             </button>
@@ -120,13 +116,13 @@ const App: React.FC = () => {
             <>
               <button
                 onClick={closeCamera}
-                className="bg-anilist-mandy text-anilist-aqua_haze p-2 rounded mb-4"
+                className="bg-anilist-mandy text-anilist-aqua_haze p-2 w-fit rounded mb-4"
               >
                 Close Camera
               </button>
               <button
                 onClick={switchCamera}
-                className="bg-anilist-atlantis text-anilist-aqua_haze p-2 rounded mb-4"
+                className="bg-anilist-mirage text-anilist-aqua_haze p-2 w-fit rounded mb-4"
               >
                 Switch Camera
               </button>
@@ -165,7 +161,11 @@ const App: React.FC = () => {
 
       {imageSrc && (
         <div className="flex flex-col items-center">
-          <img src={imageSrc} alt="Captured" className="border rounded mb-4" />
+          <img
+            src={imageSrc}
+            alt="Captured"
+            className="border rounded mb-4 w-[80%] h-[80%]"
+          />
           <button
             onClick={downloadImage}
             className="bg-anilist-cerulean text-anilist-aqua_haze p-2 rounded"
