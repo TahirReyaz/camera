@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 const App: React.FC = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isCameraAccessible, setIsCameraAccessible] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [isUsingBackCamera, setIsUsingBackCamera] = useState(false); // State to track camera type
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -79,18 +79,21 @@ const App: React.FC = () => {
         canvas.height = video.videoHeight;
 
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        setImageSrc(canvas.toDataURL("image/png"));
+        const imageData = canvas.toDataURL("image/png");
+        setCapturedImages((prevImages) => [...prevImages, imageData]);
       }
     }
   };
 
-  const downloadImage = () => {
-    if (imageSrc) {
-      const link = document.createElement("a");
-      link.href = imageSrc;
-      link.download = "captured_photo.png";
-      link.click();
-    }
+  const downloadImage = (imageSrc: string) => {
+    const link = document.createElement("a");
+    link.href = imageSrc;
+    link.download = "captured_photo.png";
+    link.click();
+  };
+
+  const removeImage = (index: number) => {
+    setCapturedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -159,19 +162,32 @@ const App: React.FC = () => {
         </button>
       )}
 
-      {imageSrc && (
+      {capturedImages.length > 0 && (
         <div className="flex flex-col items-center">
-          <img
-            src={imageSrc}
-            alt="Captured"
-            className="border rounded mb-4 w-[80%] h-[80%]"
-          />
-          <button
-            onClick={downloadImage}
-            className="bg-anilist-cerulean text-anilist-aqua_haze p-2 rounded"
-          >
-            Download Image
-          </button>
+          <h2 className="text-xl font-bold mb-4">Captured Images</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {capturedImages.map((src, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <img
+                  src={src}
+                  alt={`Captured ${index + 1}`}
+                  className="border rounded mb-2 w-40 h-40 object-contain"
+                />
+                <button
+                  onClick={() => downloadImage(src)}
+                  className="bg-purple-500 text-white p-2 rounded mb-2"
+                >
+                  Download
+                </button>
+                <button
+                  onClick={() => removeImage(index)}
+                  className="bg-red-500 text-white p-2 rounded"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
