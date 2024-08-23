@@ -164,7 +164,9 @@ const App: React.FC = () => {
 
       {capturedImages.length > 0 && (
         <div className="flex flex-col items-center">
-          <h2 className="text-xl font-bold mb-4">Captured Images</h2>
+          <h2 className="text-xl font-bold mb-4">
+            Captured Images (will fix the UI)
+          </h2>
           <div className="grid grid-cols-2 gap-4">
             {capturedImages.map((src, index) => (
               <div key={index} className="flex flex-col items-center">
