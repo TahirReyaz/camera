@@ -73,16 +73,17 @@ const App: React.FC = () => {
 
   const takePhoto = () => {
     if (canvasRef.current && videoRef.current) {
-      const context = canvasRef.current.getContext("2d");
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+
       if (context) {
-        context.drawImage(
-          videoRef.current,
-          0,
-          0,
-          canvasRef.current.width,
-          canvasRef.current.height
-        );
-        setImageSrc(canvasRef.current.toDataURL("image/png"));
+        // Ensure the canvas matches the video stream's dimensions
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        setImageSrc(canvas.toDataURL("image/png"));
       }
     }
   };
@@ -146,17 +147,12 @@ const App: React.FC = () => {
         {/* Square overlay for camera screen */}
         {isCameraOpen && (
           <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center pointer-events-none">
-            <div className="border-4 border-white w-[80%] h-[80%]"></div>
+            <div className="border-4 border-anilist-atlantis w-[80%] h-[80%]"></div>
           </div>
         )}
       </div>
 
-      <canvas
-        ref={canvasRef}
-        className="hidden"
-        width="400"
-        height="300"
-      ></canvas>
+      <canvas ref={canvasRef} className="hidden"></canvas>
 
       {isCameraOpen && (
         <button
