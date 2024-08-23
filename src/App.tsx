@@ -90,23 +90,25 @@ const App: React.FC = () => {
     setCapturedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  const btnClass = " text-anilist-aqua_haze w-fit h-fit py-2 px-4 rounded ";
+
   return (
     <div className="relative bg-anilist-white_firefly min-h-screen grid grid-cols-1 md:grid-cols-4">
-      <div className="flex flex-col items-center justify-center col-span-1 md:col-span-3">
+      <div className="flex flex-col items-center justify-center col-span-1 md:col-span-3 p-2">
         {!isCameraAccessible ? (
           <button
             onClick={requestCameraAccess}
-            className="bg-anilist-mirage text-anilist-aqua_haze p-2 rounded mb-4"
+            className={`bg-anilist-mirage mb-4 ${btnClass}`}
           >
             Request Camera Access
           </button>
         ) : (
-          <div className="grid w-full grid-cols-3 gap-12">
+          <div className="grid w-full grid-cols-3">
             <div />
             {!isCameraOpen ? (
               <button
                 onClick={() => openCamera(isUsingBackCamera)}
-                className="bg-anilist-persian_green text-anilist-aqua_haze w-fit p-2 rounded mb-4"
+                className={`bg-anilist-persian_green mb-4 ${btnClass}`}
               >
                 Open Camera
               </button>
@@ -114,13 +116,13 @@ const App: React.FC = () => {
               <>
                 <button
                   onClick={closeCamera}
-                  className="bg-anilist-mandy text-anilist-aqua_haze p-2 w-fit rounded mb-4"
+                  className={`bg-anilist-mandy mb-4 ${btnClass}`}
                 >
                   Close Camera
                 </button>
                 <button
                   onClick={switchCamera}
-                  className="bg-anilist-mirage text-anilist-aqua_haze p-2 w-fit rounded mb-4"
+                  className={`bg-anilist-mirage mb-4 ${btnClass}`}
                 >
                   Switch Camera
                 </button>
@@ -151,7 +153,7 @@ const App: React.FC = () => {
         {isCameraOpen && (
           <button
             onClick={takePhoto}
-            className="bg-anilist-cerulean text-anilist-aqua_haze p-2 rounded my-4"
+            className={`bg-anilist-cerulean mb-4 ${btnClass}`}
           >
             Take Photo
           </button>
