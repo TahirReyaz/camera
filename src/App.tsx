@@ -4,6 +4,7 @@ const App: React.FC = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isCameraAccessible, setIsCameraAccessible] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [isUsingBackCamera, setIsUsingBackCamera] = useState(false); // State to track camera type
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -16,7 +17,6 @@ const App: React.FC = () => {
         setIsCameraAccessible(true);
         alert("Camera access granted. You can now open the camera.");
       } else if (permissionStatus.state === "prompt") {
-        // Try accessing the camera to trigger the prompt
         try {
           await navigator.mediaDevices.getUserMedia({ video: true });
           setIsCameraAccessible(true);
@@ -38,15 +38,18 @@ const App: React.FC = () => {
     }
   };
 
-  const openCamera = async () => {
+  const openCamera = async (useBackCamera = false) => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            facingMode: useBackCamera ? "environment" : "user", // Toggle between front and back cameras
+          },
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setIsCameraOpen(true);
+          setIsUsingBackCamera(useBackCamera);
         }
       } catch (error) {
         console.error("Error accessing camera: ", error);
@@ -61,6 +64,11 @@ const App: React.FC = () => {
       videoRef.current.srcObject = null;
     }
     setIsCameraOpen(false);
+  };
+
+  const switchCamera = () => {
+    closeCamera(); // Close the current camera
+    openCamera(!isUsingBackCamera); // Open the opposite camera
   };
 
   const takePhoto = () => {
@@ -89,41 +97,59 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="flex flex-col items-center justify-center p-4 relative bg-anilist-white_firefly">
       {!isCameraAccessible ? (
         <button
           onClick={requestCameraAccess}
-          className="bg-gray-500 text-white p-2 rounded mb-4"
+          className="bg-gray-500 text-anilist-aqua_haze p-2 rounded mb-4"
         >
           Request Camera Access
         </button>
       ) : (
-        <>
+        <div className="grid w-full grid-cols-3 gap-12">
+          <div />
           {!isCameraOpen ? (
             <button
-              onClick={openCamera}
-              className="bg-green-500 text-white p-2 rounded mb-4"
+              onClick={() => openCamera(isUsingBackCamera)}
+              className="bg-anilist-persian_green text-anilist-aqua_haze p-2 rounded mb-4"
             >
               Open Camera
             </button>
           ) : (
-            <button
-              onClick={closeCamera}
-              className="bg-yellow-500 text-white p-2 rounded mb-4"
-            >
-              Close Camera
-            </button>
+            <>
+              <button
+                onClick={closeCamera}
+                className="bg-anilist-mandy text-anilist-aqua_haze p-2 rounded mb-4"
+              >
+                Close Camera
+              </button>
+              <button
+                onClick={switchCamera}
+                className="bg-anilist-atlantis text-anilist-aqua_haze p-2 rounded mb-4"
+              >
+                Switch Camera
+              </button>
+            </>
           )}
-        </>
+        </div>
       )}
 
-      <video
-        ref={videoRef}
-        autoPlay
-        className={`border rounded ${isCameraOpen ? "block" : "hidden"}`}
-        width="400"
-        height="300"
-      ></video>
+      <div className="relative">
+        <video
+          ref={videoRef}
+          autoPlay
+          className={`border rounded ${isCameraOpen ? "block" : "hidden"}`}
+          width="400"
+          height="300"
+        ></video>
+
+        {/* Square overlay for camera screen */}
+        {isCameraOpen && (
+          <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center pointer-events-none">
+            <div className="border-4 border-white w-[80%] h-[80%]"></div>
+          </div>
+        )}
+      </div>
 
       <canvas
         ref={canvasRef}
@@ -135,7 +161,7 @@ const App: React.FC = () => {
       {isCameraOpen && (
         <button
           onClick={takePhoto}
-          className="bg-blue-500 text-white p-2 rounded mb-4"
+          className="bg-anilist-cerulean text-anilist-aqua_haze p-2 rounded my-4"
         >
           Take Photo
         </button>
@@ -146,7 +172,7 @@ const App: React.FC = () => {
           <img src={imageSrc} alt="Captured" className="border rounded mb-4" />
           <button
             onClick={downloadImage}
-            className="bg-purple-500 text-white p-2 rounded"
+            className="bg-anilist-cerulean text-anilist-aqua_haze p-2 rounded"
           >
             Download Image
           </button>
